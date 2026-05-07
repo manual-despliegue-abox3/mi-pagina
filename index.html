@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manual de Despliegue — ABox / Avos</title>
+<title>Manual de Despliegue — ABox </title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -442,8 +442,8 @@
   <h1>Manual de Despliegue<br><span>ABox / Avos</span></h1>
   <div class="hero-sub">Proceso completo de preparación de artefactos, publicación y actualización de servidores para liberaciones del sistema Avos.</div>
   <div class="hero-meta">
-    <div class="hero-meta-item"><div class="dot dot-blue"></div> Parte 1 — Jenkins + Intranet (Álvaro)</div>
-    <div class="hero-meta-item"><div class="dot dot-green"></div> Parte 2 — Actualización de Servidor IIS (Omar)</div>
+    <div class="hero-meta-item"><div class="dot dot-blue"></div> Parte 1 — Jenkins + Intranet (Resp. de Artefactos)</div>
+    <div class="hero-meta-item"><div class="dot dot-green"></div> Parte 2 — Actualización de Servidor IIS (Resp. de Servidor)</div>
     <div class="hero-meta-item"><div class="dot dot-orange"></div> Ramas activas: 3.0 y 3.1</div>
   </div>
 </div>
@@ -508,7 +508,7 @@
     </div>
     <div class="callout callout-warn" style="margin-top: 10px;">
       <div class="callout-icon">⚠️</div>
-      <div>Las credenciales de SVN, Jenkins e Intranet las entrega el <strong>Ing. Fabián</strong>. El equipo de Sistemas instala SVN en el equipo de trabajo.</div>
+      <div>Las credenciales de SVN, Jenkins e Intranet las entrega el <strong>Líder Técnico</strong>. El equipo de Sistemas instala SVN en el equipo de trabajo.</div>
     </div>
 
     <div class="img-slot" id="slot-herramientas">
@@ -537,9 +537,9 @@
 
     <!-- Participantes -->
     <div class="participants">
-      <div class="participant"><div class="avatar av-blue">AA</div> Álvaro Árquez <span class="participant-role">&nbsp;· Instructor</span></div>
-      <div class="participant"><div class="avatar av-orange">FB</div> Fabián Contreras <span class="participant-role">&nbsp;· Líder</span></div>
-      <div class="participant"><div class="avatar av-purple">WC</div> William Castro <span class="participant-role">&nbsp;· Aprendiz</span></div>
+      <div class="participant"><div class="avatar av-blue">RA</div> Resp. de Artefactos <span class="participant-role">&nbsp;· Instructor</span></div>
+      <div class="participant"><div class="avatar av-orange">LT</div> Líder Técnico <span class="participant-role">&nbsp;· Líder</span></div>
+      <div class="participant"><div class="avatar av-purple">NI</div> Nuevo Integrante <span class="participant-role">&nbsp;· Aprendiz</span></div>
     </div>
 
     <!-- Resumen -->
@@ -573,7 +573,7 @@
             <div class="step-title">Recibir la solicitud e identificar la rama</div>
             <div class="step-time">~min 5–7</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             Alguien (cliente interno o equipo de TI) escala una solicitud de publicación de una nueva versión de Avos,<br>
             ya sea por correo o por ticket.<br><br>
@@ -598,10 +598,13 @@
             <div class="step-title">Consultar el último número de versión en Intranet</div>
             <div class="step-time">~min 8–10</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             Antes de ejecutar Jenkins, hay que saber qué número de versión usar. Para eso:<br><br>
-            <strong>Ruta en Intranet:</strong> <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;">Laboratorio → Producto → Versiones Avos → Secual Server → Rama 3.0 (o 3.1)</code><br><br>
+            <strong>Ruta en Intranet:</strong><br>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:8px 0;font-family:'DM Mono',monospace;font-size:12px;color:#7dbcff;line-height:1.9;">
+              01.04-LABORATORIO › 01.04.01-PRODUCTO (*) › VERSIONES AVOS › SQL SERVER (NATIVO) › v5.3 Avos Sql-Postgres Rama 3.0 (o 3.1)
+            </div><br>
             Tomar el <strong>último paquete publicado</strong>. En el ejemplo de la sesión, la versión 7050 salió mala → se usó la <strong>7039</strong> (la anterior válida).<br><br>
             <strong>Criterio:</strong> Si siempre te piden la versión activa, suministra la última. Si el solicitante indica que la última falló, retrocede a la anterior válida.
           </div>
@@ -627,7 +630,7 @@
             <div class="step-title">Ejecutar Build con parámetros en Jenkins</div>
             <div class="step-time">~min 8–10</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             1. Acceder a Jenkins con usuario propio.<br>
             2. Ubicar el proyecto correspondiente a la rama solicitada.<br>
@@ -662,7 +665,7 @@
             <div class="step-title">Descargar, renombrar y comprimir el artefacto generado</div>
             <div class="step-time">~min 16–17</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             Una vez Jenkins termina el build:<br><br>
             1. Descargar el artefacto generado.<br>
@@ -695,7 +698,7 @@
             <div class="step-title">Crear nuevo documento en Intranet (holder / expediente)</div>
             <div class="step-time">~min 17–19</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             1. Ir a Intranet → buscar el expediente del <strong>Actualizador Parcial SIP</strong>.<br>
             2. <strong>Copiar el holder</strong> del expediente (aparecerá el botón <em>"Nuevo documento"</em>).<br>
@@ -751,7 +754,7 @@
             <div class="step-title">Documentar descripción: tickets, bugs y plugins</div>
             <div class="step-time">~min 19–19:49</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             En el campo <strong>Descripción</strong> del documento, agregar:<br><br>
             • <strong>Tickets involucrados</strong> (Bugs / Gets)<br>
@@ -781,7 +784,7 @@
             <div class="step-title">Validar y notificar al grupo de desarrollo</div>
             <div class="step-time">~min 19:56–22:30</div>
           </div>
-          <div class="step-who">👤 Álvaro</div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
           <div class="step-desc">
             <strong>Mini validación:</strong> Confirmar que la versión publicada no afecta otras versiones activas. Verificar nombre y número.<br><br>
             <strong>Notificación al grupo de desarrollo</strong> (chat grupal). El mensaje debe incluir:<br><br>
@@ -826,9 +829,9 @@
 
     <!-- Participantes -->
     <div class="participants">
-      <div class="participant"><div class="avatar av-green">OD</div> Omar David de las Salas <span class="participant-role">&nbsp;· Instructor</span></div>
-      <div class="participant"><div class="avatar av-orange">FB</div> Fabián Contreras <span class="participant-role">&nbsp;· Líder</span></div>
-      <div class="participant"><div class="avatar av-purple">WC</div> William Castro <span class="participant-role">&nbsp;· Aprendiz</span></div>
+      <div class="participant"><div class="avatar av-green">RS</div> Resp. de Servidor <span class="participant-role">&nbsp;· Instructor</span></div>
+      <div class="participant"><div class="avatar av-orange">LT</div> Líder Técnico <span class="participant-role">&nbsp;· Líder</span></div>
+      <div class="participant"><div class="avatar av-purple">NI</div> Nuevo Integrante <span class="participant-role">&nbsp;· Aprendiz</span></div>
     </div>
 
     <!-- Resumen -->
@@ -864,7 +867,7 @@
             <div class="step-title">Recibir link de Intranet y descargar el paquete</div>
             <div class="step-time">~min 0–1</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             El laboratorio entrega el <strong>link de Intranet</strong> con el paquete de la versión a desplegar.<br>
             Descargar el paquete desde ese link.<br><br>
@@ -883,7 +886,7 @@
             <div class="step-title">Armar el paquete de actualización</div>
             <div class="step-time">~min 1–3:38</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             Partiendo del <strong>paquete base</strong> (versión activa del ABox en ese momento, ej: 6730–7053):<br><br>
             1. Descargar de Intranet <strong>versión por versión</strong>.<br>
@@ -931,7 +934,7 @@
             <div class="step-title">Acceder al servidor IIS y localizar el ABox</div>
             <div class="step-time">~min 3:52–4:51</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             En el servidor IIS:<br><br>
             1. Ubicar el <strong>ABox activo</strong> en la lista de sitios.<br>
@@ -962,7 +965,7 @@
             <div class="step-title">Crear backup de rollback (.rar)</div>
             <div class="step-time">~min 5:01–9:38</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             <strong>Antes de tocar cualquier carpeta</strong>, y con el sitio aún activo:<br><br>
             1. Crear un archivo <code>.rar</code> (o <code>.zip</code>) comprimiendo las carpetas <code>Areas</code>, <code>Bin</code> y <code>Content</code> en su estado actual.<br>
@@ -973,6 +976,10 @@
           <div class="callout callout-danger">
             <div class="callout-icon">🔴</div>
             <div><strong>NUNCA saltar este paso.</strong> Si algo falla después del reemplazo y no hay rollback, restaurar la versión anterior se vuelve un proceso largo y riesgoso.</div>
+          </div>
+          <div class="callout callout-warn" style="margin-top:10px;">
+            <div class="callout-icon">⚠️</div>
+            <div>Si la versión a desplegar incluye cambios en la base de datos (hay archivo <code>.SQL</code> en el paquete), también se recomienda realizar un <strong>backup de la base de datos</strong> antes de continuar con la actualización.</div>
           </div>
           <div class="img-slot" id="slot-rollback">
             <input type="file" accept="image/*" onchange="loadImage(this, 'slot-rollback')">
@@ -996,9 +1003,10 @@
             <div class="step-title">Detener el pool de aplicaciones y bajar el sitio</div>
             <div class="step-time">~min 9:27–9:38</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             En IIS, con el rollback ya creado:<br><br>
+            0. Antes de detener el sitio, revisar los <strong>Procesos de Trabajo (Worker Process)</strong> del pool de aplicaciones para confirmar que el sitio no está recibiendo solicitudes activas en ese momento.<br><br>
             1. <strong>Detener (Reciclar) el Pool de Aplicaciones.</strong><br>
             2. <strong>Detener el Sitio</strong>.<br><br>
             <strong>¿Por qué es obligatorio bajar el sitio?</strong><br>
@@ -1030,7 +1038,7 @@
             <div class="step-title">Copiar y reemplazar carpetas en el htdocs</div>
             <div class="step-time">~min 10:31–12:07</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             Con el sitio abajo, proceder con la actualización:<br><br>
             <strong>Orden de reemplazo:</strong><br>
@@ -1065,12 +1073,12 @@
             <div class="step-title">Verificar número de versión del archivo actualizado</div>
             <div class="step-time">~min 12:13–13:52</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             Después de copiar los archivos, <strong>verificar que la versión correcta quedó instalada</strong>:<br><br>
             <strong>Método 1 (rápido):</strong> Seleccionar el archivo principal en <code>Bin</code> → pasar el cursor encima → el tooltip muestra la versión.<br><br>
             <strong>Método 2 (detallado):</strong> Clic derecho → Propiedades → Detalles → campo <em>Versión del archivo</em>.<br><br>
-            El número debe coincidir con la versión publicada por Álvaro (ej: <code>7053</code>).<br><br>
+            El número debe coincidir con la versión publicada (ej: <code>7053</code>). Este paso es clave para confirmar que los cambios se realizaron correctamente y que no quedó ningún archivo de la versión anterior por error.<br><br>
             <strong>Verificar también:</strong><br>
             • <strong>Cambios en BD:</strong> revisar si el match de archivos indica cambios. Si no hay diferencias → no hubo cambio de BD en esta versión.<br>
             • <strong>Plugins:</strong> verificar que los plugins también estén actualizados si correspondía.
@@ -1097,7 +1105,7 @@
             <div class="step-title">Levantar el sitio y validar funcionamiento</div>
             <div class="step-time">~min 14:23–15:34</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             1. En IIS: <strong>Levantar el Pool de Aplicaciones</strong>.<br>
             2. <strong>Iniciar el Sitio</strong>.<br>
@@ -1133,7 +1141,7 @@
             <div class="step-title">Notificar al grupo de soporte SSPD</div>
             <div class="step-time">~min 20:19–20:45</div>
           </div>
-          <div class="step-who">👤 Omar</div>
+          <div class="step-who">👤 Resp. de Servidor</div>
           <div class="step-desc">
             Una vez el sitio está arriba y validado:<br><br>
             Enviar aviso al <strong>grupo de soporte SSPD</strong> confirmando que:<br><br>
@@ -1168,7 +1176,7 @@
       <div class="section-icon icon-blue">📌</div>
       <div>
         <h2>Pendientes y Acciones Identificadas</h2>
-        <p>Tareas por ejecutar para que William pueda operar de forma autónoma</p>
+        <p>Tareas por ejecutar para que el nuevo integrante pueda operar de forma autónoma</p>
       </div>
     </div>
 
@@ -1182,44 +1190,44 @@
       </thead>
       <tbody>
         <tr>
-          <td><span class="badge badge-orange">Fabián</span></td>
-          <td>Entregar credenciales de SVN, URLs de ramas Avos 3.0 / 3.1 y accesos a William</td>
+          <td><span class="badge badge-orange">Líder Técnico</span></td>
+          <td>Entregar credenciales de SVN, URLs de ramas Avos 3.0 / 3.1 y accesos al nuevo integrante</td>
           <td>Credenciales pueden ir encriptadas / encapsuladas antes de compartir</td>
         </tr>
         <tr>
-          <td><span class="badge badge-orange">Fabián</span></td>
-          <td>Contactar a William al día siguiente para explicar los siguientes pasos del onboarding</td>
+          <td><span class="badge badge-orange">Líder Técnico</span></td>
+          <td>Contactar al nuevo integrante para explicar los siguientes pasos del onboarding</td>
           <td>Continuación de la sesión de inducción</td>
         </tr>
         <tr>
           <td><span class="badge badge-blue">Sistemas</span></td>
-          <td>Instalar SVN en el equipo de William</td>
-          <td>Actividad creada por Álvaro para que William pueda ver el repositorio</td>
+          <td>Instalar SVN en el equipo del nuevo integrante</td>
+          <td>Necesario para que pueda visualizar el repositorio</td>
         </tr>
         <tr>
-          <td><span class="badge badge-blue">Álvaro</span></td>
-          <td>Crear usuario de William en Planificación Laboratorio e Intranet</td>
-          <td>William confirmó que no tiene acceso a Planificación Laboratorio</td>
+          <td><span class="badge badge-blue">Resp. de Artefactos</span></td>
+          <td>Crear usuario del nuevo integrante en Planificación Laboratorio e Intranet</td>
+          <td>El nuevo integrante no tiene acceso a Planificación Laboratorio</td>
         </tr>
         <tr>
-          <td><span class="badge badge-purple">William</span></td>
-          <td>Elaborar el manual completo del proceso (sesión Álvaro + sesión Omar)</td>
+          <td><span class="badge badge-purple">Nuevo Integrante</span></td>
+          <td>Elaborar el manual completo del proceso (sesión Parte 1 + sesión Parte 2)</td>
           <td>Usando las grabaciones de ambas sesiones como referencia</td>
         </tr>
         <tr>
-          <td><span class="badge badge-purple">William</span></td>
-          <td>Ejecutar el próximo despliegue con acompañamiento de Álvaro</td>
-          <td>Primera práctica guiada — Álvaro corrige y orienta</td>
+          <td><span class="badge badge-purple">Nuevo Integrante</span></td>
+          <td>Ejecutar el próximo despliegue con acompañamiento del Resp. de Artefactos</td>
+          <td>Primera práctica guiada — el instructor corrige y orienta</td>
         </tr>
         <tr>
-          <td><span class="badge badge-purple">William</span></td>
-          <td>Ejecutar el próximo despliegue con acompañamiento de Omar</td>
-          <td>Primera práctica guiada en actualización de servidor — Omar orienta</td>
+          <td><span class="badge badge-purple">Nuevo Integrante</span></td>
+          <td>Ejecutar el próximo despliegue con acompañamiento del Resp. de Servidor</td>
+          <td>Primera práctica guiada en actualización de servidor — el instructor orienta</td>
         </tr>
         <tr>
-          <td><span class="badge badge-blue">Álvaro + Omar</span></td>
-          <td>Asistir y supervisar el primer despliegue autónomo de William</td>
-          <td>Después de la práctica guiada, William lo hace solo con ellos presentes</td>
+          <td><span class="badge badge-blue">Resp. Artefactos + Resp. Servidor</span></td>
+          <td>Asistir y supervisar el primer despliegue autónomo del nuevo integrante</td>
+          <td>Después de la práctica guiada, el nuevo integrante lo ejecuta con supervisión</td>
         </tr>
       </tbody>
     </table>
@@ -1257,7 +1265,7 @@
 </div>
 
 <div class="footer">
-  Manual de Despliegue ABox / Avos · Generado internamente · Usar con grabaciones de sesiones Álvaro + Omar
+  Manual de Despliegue ABox / Avos · Generado internamente · Usar con grabaciones de sesiones Parte 1 + Parte 2
 </div>
 
 <script>
