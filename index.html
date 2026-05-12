@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Despliegue — ABox</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --warn: #e3b341;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #484f58;
+    --part1: #1a2332;
+    --part1-accent: #58a6ff;
+    --part2: #1a2b1e;
+    --part2-accent: #3fb950;
+    --radius: 8px;
+    --radius-lg: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1f3c 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 52px 40px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(88,166,255,0.12);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.15;
+    max-width: 720px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--text-muted);
+    margin-top: 12px;
+    font-size: 14px;
+    max-width: 600px;
+  }
+  .hero-meta {
+    display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-blue { background: var(--part1-accent); }
+  .dot-green { background: var(--part2-accent); }
+  .dot-orange { background: var(--warn); }
+
+  /* ── NAV ── */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sticky-nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    padding: 13px 22px;
+    background: none; border: none;
+    color: var(--text-muted);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── SECTION TITLES ── */
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 32px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .icon-blue { background: rgba(88,166,255,0.12); border: 1px solid rgba(88,166,255,0.25); }
+  .icon-green { background: rgba(63,185,80,0.12); border: 1px solid rgba(63,185,80,0.25); }
+  .section-header h2 {
+    font-size: 22px; font-weight: 700; color: var(--text);
+  }
+  .section-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── PARTICIPANTS ── */
+  .participants {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px;
+  }
+  .participant {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 40px; padding: 7px 14px;
+    font-size: 13px;
+  }
+  .avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .av-blue { background: rgba(88,166,255,0.2); color: var(--accent); }
+  .av-green { background: rgba(63,185,80,0.2); color: var(--accent2); }
+  .av-orange { background: rgba(227,179,65,0.2); color: var(--warn); }
+  .av-purple { background: rgba(210,168,255,0.2); color: var(--accent4); }
+  .participant-role { font-size: 11px; color: var(--text-muted); margin-left: 2px; }
+
+  /* ── SUMMARY CARDS ── */
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap: 12px; margin-bottom: 36px;
+  }
+  .summary-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 16px 18px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .sum-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border-radius: 4px; padding: 2px 7px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .sum-text { font-size: 13px; color: var(--text); }
+
+  /* ── STEPS ── */
+  .steps-list { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: grid; grid-template-columns: 56px 1fr;
+    position: relative;
+  }
+  .step:not(:last-child)::before {
+    content: ''; position: absolute;
+    left: 27px; top: 52px; bottom: 0;
+    width: 2px; background: var(--border);
+    z-index: 0;
+  }
+
+  .step-num-col {
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 16px; position: relative; z-index: 1;
+  }
+  .step-circle {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; font-weight: 500;
+    flex-shrink: 0;
+  }
+  .step-circle-blue {
+    background: rgba(88,166,255,0.15);
+    border: 2px solid rgba(88,166,255,0.4);
+    color: var(--accent);
+  }
+  .step-circle-green {
+    background: rgba(63,185,80,0.15);
+    border: 2px solid rgba(63,185,80,0.4);
+    color: var(--accent2);
+  }
+
+  .step-body {
+    padding: 12px 0 32px 16px;
+  }
+  .step-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px;
+  }
+  .step-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .step-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+    background: var(--surface2); border-radius: 4px;
+    padding: 3px 8px; white-space: nowrap; flex-shrink: 0;
+  }
+  .step-who {
+    font-size: 12px; color: var(--text-muted); margin-bottom: 8px;
+  }
+  .step-desc {
+    font-size: 13.5px; color: var(--text-muted);
+    line-height: 1.75; margin-bottom: 14px;
+  }
+  .step-desc strong { color: var(--text); font-weight: 600; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .callout-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .callout-warn {
+    background: rgba(227,179,65,0.08);
+    border: 1px solid rgba(227,179,65,0.25);
+    color: #c9a227;
+  }
+  .callout-info {
+    background: rgba(88,166,255,0.07);
+    border: 1px solid rgba(88,166,255,0.2);
+    color: #7dbcff;
+  }
+  .callout-tip {
+    background: rgba(63,185,80,0.07);
+    border: 1px solid rgba(63,185,80,0.2);
+    color: #6dca79;
+  }
+  .callout-danger {
+    background: rgba(247,129,102,0.08);
+    border: 1px solid rgba(247,129,102,0.25);
+    color: var(--accent3);
+  }
+
+  /* ── IMAGE SLOT ── */
+  .img-slot {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    margin: 14px 0;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .img-slot:hover { border-color: var(--accent); }
+  .img-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 28px 20px; gap: 10px;
+    cursor: pointer;
+  }
+  .img-placeholder-icon { font-size: 28px; opacity: 0.4; }
+  .img-placeholder-label {
+    font-size: 13px; color: var(--text-muted);
+    text-align: center; line-height: 1.5;
+  }
+  .img-placeholder-desc {
+    font-size: 11.5px; color: var(--text-dim);
+    text-align: center; font-family: 'DM Mono', monospace;
+    max-width: 360px;
+  }
+  .img-slot input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+  }
+  .img-slot img {
+    width: 100%; display: block;
+    border-radius: calc(var(--radius-lg) - 2px);
+    max-height: 420px; object-fit: contain;
+    background: var(--surface2);
+  }
+  .img-caption {
+    font-size: 11.5px; color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    padding: 6px 14px 10px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .remove-img {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(247,129,102,0.15);
+    border: 1px solid rgba(247,129,102,0.3);
+    color: var(--accent3);
+    border-radius: 6px; padding: 4px 10px;
+    font-size: 11px; cursor: pointer; display: none;
+    font-family: 'Sora', sans-serif;
+  }
+  .img-slot.has-image .remove-img { display: block; }
+  .img-slot.has-image .img-placeholder { display: none; }
+
+  /* ── PENDING TABLE ── */
+  .pending-section { margin-top: 60px; }
+  .pending-table {
+    width: 100%; border-collapse: collapse;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .pending-table thead th {
+    background: var(--surface2);
+    padding: 12px 18px; text-align: left;
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .pending-table tbody td {
+    padding: 13px 18px;
+    font-size: 13px; color: var(--text);
+    border-bottom: 1px solid rgba(48,54,61,0.6);
+    vertical-align: top;
+  }
+  .pending-table tbody tr:last-child td { border-bottom: none; }
+  .pending-table tbody tr:hover { background: var(--surface); }
+  .badge {
+    display: inline-block;
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-blue { background: rgba(88,166,255,0.12); color: var(--accent); }
+  .badge-green { background: rgba(63,185,80,0.12); color: var(--accent2); }
+  .badge-orange { background: rgba(227,179,65,0.12); color: var(--warn); }
+  .badge-purple { background: rgba(210,168,255,0.12); color: var(--accent4); }
+
+  /* ── TOOLS GRID ── */
+  .tools-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px; margin-bottom: 36px;
+  }
+  .tool-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px 16px;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .tool-icon { font-size: 22px; margin-bottom: 10px; }
+  .tool-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .tool-desc { font-size: 12px; color: var(--text-muted); }
+
+  /* ── SECTION DIVIDER ── */
+  .section-part {
+    margin-top: 64px;
+  }
+  .part-divider {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px; border-radius: var(--radius-lg);
+    margin-bottom: 36px;
+  }
+  .part-divider-blue {
+    background: linear-gradient(135deg, var(--part1) 0%, #1d2d45 100%);
+    border: 1px solid rgba(88,166,255,0.2);
+  }
+  .part-divider-green {
+    background: linear-gradient(135deg, var(--part2) 0%, #1e3326 100%);
+    border: 1px solid rgba(63,185,80,0.2);
+  }
+  .part-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; opacity: 0.7;
+  }
+  .part-title {
+    font-size: 19px; font-weight: 700;
+  }
+  .part-title-blue { color: var(--part1-accent); }
+  .part-title-green { color: var(--part2-accent); }
+
+  /* ── SAVE BUTTON ── */
+  .save-bar {
+    position: fixed; bottom: 24px; right: 24px; z-index: 200;
+    display: flex; gap: 10px;
+  }
+  .save-btn {
+    background: var(--accent);
+    color: #0d1117;
+    border: none; border-radius: 10px;
+    padding: 12px 24px;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(88,166,255,0.35);
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .save-btn:hover { background: #79c0ff; transform: translateY(-2px); }
+  .save-btn:active { transform: translateY(0); }
+
+  /* ── TABS ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 80px; padding: 28px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 12px; color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── EDITABLE ── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 4px;
+    transition: background 0.15s, box-shadow 0.15s;
+    cursor: text;
+  }
+  [contenteditable="true"]:hover {
+    background: rgba(88,166,255,0.06);
+    box-shadow: 0 0 0 2px rgba(88,166,255,0.15);
+  }
+  [contenteditable="true"]:focus {
+    background: rgba(88,166,255,0.1);
+    box-shadow: 0 0 0 2px rgba(88,166,255,0.4);
+  }
+  .edit-hint {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+    background: rgba(88,166,255,0.15);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent);
+    border-radius: 20px; padding: 6px 18px;
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    pointer-events: none; z-index: 999;
+    opacity: 0; transition: opacity 0.4s;
+    white-space: nowrap;
+  }
+  .edit-hint.show { opacity: 1; }
+  .edit-mode-btn {
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .edit-mode-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .edit-mode-btn.on {
+    background: rgba(63,185,80,0.12);
+    border-color: rgba(63,185,80,0.4);
+    color: var(--accent2);
+  }
+  .pending-table td[contenteditable="true"] { min-width: 60px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">📋 Documentación técnica interna</div>
+  <h1>Manual de Despliegue<br><span>ABox</span></h1>
+  <div class="hero-sub">Proceso completo de preparación de artefactos, publicación y actualización de servidores para liberaciones del sistema ABox.</div>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="dot dot-blue"></div> Parte 1 — Jenkins + Intranet (Resp. de Artefactos)</div>
+    <div class="hero-meta-item"><div class="dot dot-green"></div> Parte 2 — Actualización de Servidor IIS (Resp. de Servidor)</div>
+    <div class="hero-meta-item"><div class="dot dot-orange"></div> Ramas activas: 3.0 y 3.1</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="sticky-nav">
+  <button class="nav-btn active" onclick="showTab('herramientas')">🧰 Herramientas</button>
+  <button class="nav-btn" onclick="showTab('parte1')">🔵 Parte 1 — Jenkins</button>
+  <button class="nav-btn" onclick="showTab('parte2')">🟢 Parte 2 — Servidor</button>
+  <button class="nav-btn" onclick="showTab('pendientes')">📌 Pendientes</button>
+</nav>
+
+<div class="container">
+
+  <!-- ══════════════════════════════ TAB: HERRAMIENTAS ══════════════════════════════ -->
+  <div id="tab-herramientas" class="tab-content active">
+
+    <div class="section-header" style="margin-top: 8px;">
+      <div class="section-icon icon-blue">🧰</div>
+      <div>
+        <h2>Herramientas y Plataformas</h2>
+        <p>Accesos necesarios para ejecutar el proceso de despliegue</p>
+      </div>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon">📋</div>
+        <div class="tool-name">Planificación Soporte</div>
+        <div class="tool-desc">Gestión y seguimiento de solicitudes de soporte</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🔬</div>
+        <div class="tool-name">Planificación Laboratorio</div>
+        <div class="tool-desc">Gestión de versiones del producto (App)</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🌐</div>
+        <div class="tool-name">Intranet</div>
+        <div class="tool-desc">Repositorio central de paquetes, versiones y expedientes</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">⚙️</div>
+        <div class="tool-name">Jenkins</div>
+        <div class="tool-desc">CI/CD — generación de artefactos de despliegue</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🗂️</div>
+        <div class="tool-name">SVN</div>
+        <div class="tool-desc">Control de versiones — 3 ramas: Community, ABox 3.0, ABox 3.1</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🖥️</div>
+        <div class="tool-name">IIS (Servidor)</div>
+        <div class="tool-desc">Servidor web donde se actualiza el ABox en producción/PP</div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><strong>Ramas activas:</strong> Las ramas que se mueven actualmente son <strong>ABox 3.0</strong> y <strong>ABox 3.1</strong>. Siempre preguntar al solicitante cuál rama desea publicar antes de iniciar el proceso.</div>
+    </div>
+    <div class="callout callout-warn" style="margin-top: 10px;">
+      <div class="callout-icon">⚠️</div>
+      <div>Las credenciales de SVN, Jenkins e Intranet las entrega el <strong>Líder Técnico</strong>. El equipo de Sistemas instala SVN en el equipo de trabajo.</div>
+    </div>
+
+    <div class="img-slot" id="slot-herramientas">
+      <input type="file" accept="image/*" onchange="loadImage(this, 'slot-herramientas')">
+      <div class="img-placeholder">
+        <div class="img-placeholder-icon">🖼️</div>
+        <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+        <div class="img-placeholder-desc">CAPTURA SUGERIDA: Pantalla con acceso abierto a las 4–5 plataformas (Intranet, Jenkins, Planificación Soporte, Planificación Lab y SVN) mostrando las URLs y pantallas de login</div>
+      </div>
+      <img id="img-herramientas" src="" alt="">
+      <div class="img-caption">Herramientas y plataformas del proceso</div>
+      <button class="remove-img" onclick="removeImage('slot-herramientas', 'img-herramientas')">✕ Quitar imagen</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════ TAB: PARTE 1 ══════════════════════════════ -->
+  <div id="tab-parte1" class="tab-content">
+
+    <div class="part-divider part-divider-blue">
+      <div>
+        <div class="part-num">Parte 1 de 2</div>
+        <div class="part-title part-title-blue">Preparación de Artefactos y Publicación en Intranet</div>
+      </div>
+    </div>
+
+    <!-- Participantes -->
+    <div class="participants">
+      <div class="participant"><div class="avatar av-blue">RA</div> Resp. de Artefactos <span class="participant-role">&nbsp;· Instructor</span></div>
+      <div class="participant"><div class="avatar av-orange">LT</div> Líder Técnico <span class="participant-role">&nbsp;· Líder</span></div>
+      <div class="participant"><div class="avatar av-purple">NI</div> Nuevo Integrante <span class="participant-role">&nbsp;· Aprendiz</span></div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="section-header">
+      <div class="section-icon icon-blue">✅</div>
+      <div><h2>Resumen del proceso</h2></div>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="sum-num">01</div><div class="sum-text">Identificar rama y versión a publicar</div></div>
+      <div class="summary-card"><div class="sum-num">02</div><div class="sum-text">Consultar último paquete en Intranet</div></div>
+      <div class="summary-card"><div class="sum-num">03</div><div class="sum-text">Ejecutar Build en Jenkins</div></div>
+      <div class="summary-card"><div class="sum-num">04</div><div class="sum-text">Comprimir y renombrar el artefacto</div></div>
+      <div class="summary-card"><div class="sum-num">05</div><div class="sum-text">Cargar insumo en Intranet (holder)</div></div>
+      <div class="summary-card"><div class="sum-num">06</div><div class="sum-text">Documentar tickets y plugins</div></div>
+      <div class="summary-card"><div class="sum-num">07</div><div class="sum-text">Publicar y notificar al equipo</div></div>
+    </div>
+
+    <!-- PASOS -->
+    <div class="section-header">
+      <div class="section-icon icon-blue">🔍</div>
+      <div><h2>Paso a paso detallado</h2></div>
+    </div>
+
+    <div class="steps-list">
+
+      <!-- PASO 1 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">01</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Recibir la solicitud e identificar la rama</div>
+            <div class="step-time">~min 5–7</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            Alguien (cliente interno o equipo de TI) escala una solicitud de publicación de una nueva versión de ABox,<br>
+            ya sea por correo o por ticket.<br><br>
+            <strong>Preguntar siempre:</strong> ¿Qué rama se va a publicar?
+            <ul style="margin: 8px 0 0 18px; font-size: 13px;">
+              <li><strong>3.0</strong> → Jenkins: proyecto <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;">agua de RD 3.0</code></li>
+              <li><strong>3.1</strong> → Jenkins: proyecto <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;">agua de vulnerable 3.1</code></li>
+            </ul>
+          </div>
+          <div class="callout callout-info">
+            <div class="callout-icon">ℹ️</div>
+            <div>Las ramas activas son <strong>3.0</strong> y <strong>3.1</strong>. Son las únicas que se mueven actualmente. Si hay duda, siempre confirmar con quien hace la solicitud.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">02</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Consultar el último número de versión en Intranet</div>
+            <div class="step-time">~min 8–10</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            Antes de ejecutar Jenkins, hay que saber qué número de versión usar. Para eso:<br><br>
+            <strong>Ruta en Intranet:</strong><br>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:8px 0;font-family:'DM Mono',monospace;font-size:12px;color:#7dbcff;line-height:1.9;">
+              01.04-LABORATORIO › 01.04.01-PRODUCTO (*) › VERSIONES ABOX › SQL SERVER (NATIVO) › v5.3 ABox Sql-Postgres Rama 3.0 (o 3.1)
+            </div><br>
+            Tomar el <strong>último paquete publicado</strong>. En el ejemplo de la sesión, la versión 7050 salió mala → se usó la <strong>7039</strong> (la anterior válida).<br><br>
+            <strong>Criterio:</strong> Si siempre te piden la versión activa, suministra la última. Si el solicitante indica que la última falló, retrocede a la anterior válida.
+          </div>
+          <div class="img-slot" id="slot-intranet-versiones">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-intranet-versiones')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Pantalla de Intranet → Laboratorio → Producto → Versiones ABox → Secual Server → Rama 3.0, mostrando la lista de versiones publicadas y el último paquete disponible</div>
+            </div>
+            <img id="img-intranet-versiones" src="" alt="">
+            <div class="img-caption">Ruta de versiones en Intranet — identificación del último paquete</div>
+            <button class="remove-img" onclick="removeImage('slot-intranet-versiones', 'img-intranet-versiones')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">03</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Ejecutar Build con parámetros en Jenkins</div>
+            <div class="step-time">~min 8–10</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            1. Acceder a Jenkins con usuario propio.<br>
+            2. Ubicar el proyecto correspondiente a la rama solicitada.<br>
+            3. Dar clic en el <strong>nombre del proyecto</strong>.<br>
+            4. Seleccionar <strong>"Build with Parameters"</strong>.<br>
+            5. Ingresar el <strong>número de versión</strong> identificado en el paso anterior (ej: <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;">7039</code>).<br>
+            6. Dar <strong>ejecutar</strong> y esperar que finalice el build.
+          </div>
+          <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div>En el panel de Jenkins puedes ver el progreso en tiempo real. Cuando termina, el artefacto queda disponible para descargar.</div>
+          </div>
+          <div class="img-slot" id="slot-jenkins-build">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-jenkins-build')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Pantalla de Jenkins con el proyecto seleccionado y el formulario "Build with Parameters" abierto, mostrando el campo de número de versión con un valor de ejemplo (ej: 7039)</div>
+            </div>
+            <img id="img-jenkins-build" src="" alt="">
+            <div class="img-caption">Jenkins — Build with Parameters con número de versión ingresado</div>
+            <button class="remove-img" onclick="removeImage('slot-jenkins-build', 'img-jenkins-build')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 4 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">04</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Descargar, renombrar y comprimir el artefacto generado</div>
+            <div class="step-time">~min 16–17</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            Una vez Jenkins termina el build:<br><br>
+            1. Descargar el artefacto generado.<br>
+            2. <strong>Renombrar en minúscula</strong> para coincidir con la estructura de Intranet.<br>
+            3. <strong>Comprimir</strong> el artefacto en <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;">.zip</code> (manteniendo la misma estructura de carpetas).
+          </div>
+          <div class="callout callout-warn">
+            <div class="callout-icon">⚠️</div>
+            <div>El nombre en minúscula es importante para que la Intranet lo reconozca correctamente al cargarlo.</div>
+          </div>
+          <div class="img-slot" id="slot-artefacto">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-artefacto')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Explorador de archivos mostrando el artefacto descargado de Jenkins, ya renombrado en minúscula y el archivo .zip generado listo para subir a Intranet</div>
+            </div>
+            <img id="img-artefacto" src="" alt="">
+            <div class="img-caption">Artefacto renombrado y comprimido listo para cargar</div>
+            <button class="remove-img" onclick="removeImage('slot-artefacto', 'img-artefacto')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 5 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">05</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Crear nuevo documento en Intranet (holder / expediente)</div>
+            <div class="step-time">~min 17–19</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            1. Ir a Intranet → buscar el expediente del <strong>Actualizador Parcial SIP</strong>.<br>
+            2. <strong>Copiar el holder</strong> del expediente (aparecerá el botón <em>"Nuevo documento"</em>).<br>
+            3. Dar clic en <strong>Nuevo documento</strong>.<br>
+            4. Cargar el <strong>insumo principal</strong> (el <code>.zip</code> generado).<br>
+            5. Cargar los <strong>anexos secundarios</strong> (archivos <code>.TXT</code> que acompañan el paquete).<br>
+            6. Completar el <strong>nombre del documento</strong> con el rango de versiones:<br>
+            <br>
+            <table style="font-size:13px;border-collapse:collapse;width:100%;max-width:500px;">
+              <thead>
+                <tr style="background:var(--surface2);">
+                  <th style="padding:8px 12px;text-align:left;border:1px solid var(--border);">Situación</th>
+                  <th style="padding:8px 12px;text-align:left;border:1px solid var(--border);">Nombre del campo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:8px 12px;border:1px solid var(--border);">Jenkins NO generó <code>.SQL</code></td>
+                  <td style="padding:8px 12px;border:1px solid var(--border);">Solo el número de la versión actual</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 12px;border:1px solid var(--border);">Jenkins SÍ generó <code>.SQL</code> → hay cambio de BD</td>
+                  <td style="padding:8px 12px;border:1px solid var(--border);">Rango: <code>7038 – 7039</code> (versión anterior → actual)</td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+            7. Dar <strong>Guardar y seguir editando</strong>.
+          </div>
+          <div class="callout callout-danger">
+            <div class="callout-icon">🔴</div>
+            <div>Si Jenkins arrojó un archivo <code>.SQL</code>, <strong>sí hay cambio de base de datos</strong>. En ese caso el rango en el nombre es obligatorio. Si no hay <code>.SQL</code>, no hubo cambio de BD.</div>
+          </div>
+          <div class="img-slot" id="slot-intranet-nuevo">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-intranet-nuevo')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Pantalla de Intranet con el formulario "Nuevo documento" abierto dentro del holder del Actualizador Parcial SIP, mostrando el campo de insumo principal cargado con el .zip, los anexos .TXT y el campo de nombre con el rango de versiones completado</div>
+            </div>
+            <img id="img-intranet-nuevo" src="" alt="">
+            <div class="img-caption">Intranet — formulario de nuevo documento con insumo y rango de versión</div>
+            <button class="remove-img" onclick="removeImage('slot-intranet-nuevo', 'img-intranet-nuevo')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 6 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">06</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Documentar descripción: tickets, bugs y plugins</div>
+            <div class="step-time">~min 19–19:49</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            En el campo <strong>Descripción</strong> del documento, agregar:<br><br>
+            • <strong>Tickets involucrados</strong> (Bugs / Gets)<br>
+            • <strong>Plugins</strong> afectados o actualizados<br><br>
+            Aunque parezca redundante, es mejor que sobre información que falte. Esto es clave para el historial y la trazabilidad del despliegue.<br><br>
+            Finalmente: <strong>Guardar → Publicar → Continuar</strong> (sin llenar más campos).
+          </div>
+          <div class="img-slot" id="slot-descripcion">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-descripcion')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Campo de descripción en Intranet con los tickets (Bugs/Gets) y plugins listados, y el botón "Publicar" visible listo para hacer clic</div>
+            </div>
+            <img id="img-descripcion" src="" alt="">
+            <div class="img-caption">Campo descripción con tickets y plugins — listo para publicar</div>
+            <button class="remove-img" onclick="removeImage('slot-descripcion', 'img-descripcion')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 7 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-blue">07</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Validar y notificar al grupo de desarrollo</div>
+            <div class="step-time">~min 19:56–22:30</div>
+          </div>
+          <div class="step-who">👤 Resp. de Artefactos</div>
+          <div class="step-desc">
+            <strong>Mini validación:</strong> Confirmar que la versión publicada no afecta otras versiones activas. Verificar nombre y número.<br><br>
+            <strong>Notificación al grupo de desarrollo</strong> (chat grupal). El mensaje debe incluir:<br><br>
+            <ul style="margin: 6px 0 0 18px; font-size:13px; line-height:2;">
+              <li>🔗 <strong>URL de Intranet</strong> donde quedó publicado el paquete</li>
+              <li>📦 <strong>Rango de versión</strong> (de dónde a dónde, ej: 7038 → 7039)</li>
+              <li>🗄️ <strong>Tipo de cambio:</strong> <em>"con cambio de base de datos"</em> o <em>"sin base de datos"</em></li>
+              <li>👥 <strong>Citar a todos</strong> los responsables del equipo</li>
+              <li>📋 <strong>Copiar la descripción</strong> del ticket en el mensaje</li>
+            </ul>
+          </div>
+          <div class="callout callout-tip">
+            <div class="callout-icon">✅</div>
+            <div>Con la notificación enviada, la <strong>Parte 1 del despliegue queda completa</strong>. El paquete ya está publicado en Intranet y el equipo notificado.</div>
+          </div>
+          <div class="img-slot" id="slot-notificacion">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-notificacion')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Chat grupal de desarrollo con el mensaje de notificación enviado, mostrando la URL de Intranet, el rango de versión, el tipo de cambio (con/sin BD) y la lista de responsables citados</div>
+            </div>
+            <img id="img-notificacion" src="" alt="">
+            <div class="img-caption">Notificación al grupo de desarrollo — versión publicada ✅</div>
+            <button class="remove-img" onclick="removeImage('slot-notificacion', 'img-notificacion')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /steps-list -->
+  </div><!-- /tab-parte1 -->
+
+  <!-- ══════════════════════════════ TAB: PARTE 2 ══════════════════════════════ -->
+  <div id="tab-parte2" class="tab-content">
+
+    <div class="part-divider part-divider-green">
+      <div>
+        <div class="part-num">Parte 2 de 2</div>
+        <div class="part-title part-title-green">Actualización del ABox en el Servidor IIS (PP / Producción)</div>
+      </div>
+    </div>
+
+    <!-- Participantes -->
+    <div class="participants">
+      <div class="participant"><div class="avatar av-green">RS</div> Resp. de Servidor <span class="participant-role">&nbsp;· Instructor</span></div>
+      <div class="participant"><div class="avatar av-orange">LT</div> Líder Técnico <span class="participant-role">&nbsp;· Líder</span></div>
+      <div class="participant"><div class="avatar av-purple">NI</div> Nuevo Integrante <span class="participant-role">&nbsp;· Aprendiz</span></div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="section-header">
+      <div class="section-icon icon-green">✅</div>
+      <div><h2>Resumen del proceso</h2></div>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="sum-num">01</div><div class="sum-text">Recibir link de Intranet y descargar paquete</div></div>
+      <div class="summary-card"><div class="sum-num">02</div><div class="sum-text">Armar el paquete de actualización</div></div>
+      <div class="summary-card"><div class="sum-num">03</div><div class="sum-text">Acceder al servidor IIS y localizar el ABox</div></div>
+      <div class="summary-card"><div class="sum-num">04</div><div class="sum-text">Crear backup (.rar) de rollback</div></div>
+      <div class="summary-card"><div class="sum-num">05</div><div class="sum-text">Bajar sitio + pool de aplicaciones</div></div>
+      <div class="summary-card"><div class="sum-num">06</div><div class="sum-text">Copiar y reemplazar carpetas (Areas, Bin, Content)</div></div>
+      <div class="summary-card"><div class="sum-num">07</div><div class="sum-text">Verificar versión correcta del archivo</div></div>
+      <div class="summary-card"><div class="sum-num">08</div><div class="sum-text">Levantar sitio y validar login</div></div>
+      <div class="summary-card"><div class="sum-num">09</div><div class="sum-text">Notificar al grupo de soporte SSPD</div></div>
+    </div>
+
+    <!-- PASOS -->
+    <div class="section-header">
+      <div class="section-icon icon-green">🔍</div>
+      <div><h2>Paso a paso detallado</h2></div>
+    </div>
+
+    <div class="steps-list">
+
+      <!-- PASO 1 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">01</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Recibir link de Intranet y descargar el paquete</div>
+            <div class="step-time">~min 0–1</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            El laboratorio entrega el <strong>link de Intranet</strong> con el paquete de la versión a desplegar.<br>
+            Descargar el paquete desde ese link.<br><br>
+            <strong>Nota sobre tipos de despliegue:</strong><br>
+            • El paquete de PP/TRD puede ser más pequeño que un despliegue de producción estándar.<br>
+            • La estructura varía: los paquetes nuevos (3.0 / 3.1) vienen más desordenados que los de la rama 2.7 (obsoleta). Puede ser necesario <strong>armar el paquete manualmente</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">02</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Armar el paquete de actualización</div>
+            <div class="step-time">~min 1–3:38</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            Partiendo del <strong>paquete base</strong> (versión activa del ABox en ese momento, ej: 6730–7053):<br><br>
+            1. Descargar de Intranet <strong>versión por versión</strong>.<br>
+            2. De cada descarga, extraer <strong>solo estas carpetas</strong>:<br><br>
+            <table style="font-size:13px;border-collapse:collapse;width:100%;max-width:480px;">
+              <thead>
+                <tr style="background:var(--surface2);">
+                  <th style="padding:8px 12px;text-align:left;border:1px solid var(--border);">Carpeta</th>
+                  <th style="padding:8px 12px;text-align:left;border:1px solid var(--border);">Contenido</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="padding:8px 12px;border:1px solid var(--border);"><code>Areas</code></td><td style="padding:8px 12px;border:1px solid var(--border);">Vistas, reportes y recursos de área</td></tr>
+                <tr><td style="padding:8px 12px;border:1px solid var(--border);"><code>Bin</code></td><td style="padding:8px 12px;border:1px solid var(--border);">DLLs actualizadas</td></tr>
+                <tr><td style="padding:8px 12px;border:1px solid var(--border);"><code>Content</code></td><td style="padding:8px 12px;border:1px solid var(--border);">JavaScript y recursos web</td></tr>
+              </tbody>
+            </table>
+            <br>
+            3. Copiar y pegar esas 3 carpetas sobre el <strong>paquete principal manejable</strong> (el archivo actualizable que se mantiene como base).<br>
+            4. Los reemplazos se van acumulando versión a versión.<br><br>
+            <strong>Componentes adicionales del paquete completo:</strong><br>
+            • <strong>Plugins:</strong> vienen en el paquete TRD (DLLs + XMLs de configuración).<br>
+            • <strong>Jobs:</strong> buscados por servidor en Superservicio (5 frontales, cada uno con su job independiente: DLL + XML).<br>
+            • <strong>Acciones:</strong> buscadas 1x1 en Intranet según los tickets de cambio.
+          </div>
+          <div class="img-slot" id="slot-paquete">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-paquete')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Explorador de archivos mostrando el paquete base de actualización ya armado con las carpetas Areas, Bin y Content, y sus subcarpetas con las DLLs y archivos actualizados (con fecha de modificación reciente visible)</div>
+            </div>
+            <img id="img-paquete" src="" alt="">
+            <div class="img-caption">Paquete de actualización armado — carpetas Areas, Bin y Content</div>
+            <button class="remove-img" onclick="removeImage('slot-paquete', 'img-paquete')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">03</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Acceder al servidor IIS y localizar el ABox</div>
+            <div class="step-time">~min 3:52–4:51</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            En el servidor IIS:<br><br>
+            1. Ubicar el <strong>ABox activo</strong> en la lista de sitios.<br>
+            2. Estado: <em>punto blanco</em> = ejecutándose / <em>detenido</em> = apagado.<br>
+            3. Verificar también el <strong>Grupo de Aplicaciones</strong> → debe estar en estado <em>Iniciado</em>.<br>
+            4. Dar clic en <strong>Explorar</strong> → te lleva directamente a la carpeta <code>htdocs</code> del ABox que se va a actualizar.<br>
+            5. Confirmar que la carpeta <code>htdocs</code> contiene las subcarpetas <code>Areas</code>, <code>Bin</code> y <code>Content</code>.
+          </div>
+          <div class="img-slot" id="slot-iis">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-iis')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Consola de IIS mostrando el sitio ABox activo en la lista de sitios con su estado, el pool de aplicaciones correspondiente, y la carpeta htdocs abierta en el explorador mostrando las subcarpetas Areas, Bin y Content</div>
+            </div>
+            <img id="img-iis" src="" alt="">
+            <div class="img-caption">IIS — sitio ABox activo y carpeta htdocs localizada</div>
+            <button class="remove-img" onclick="removeImage('slot-iis', 'img-iis')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 4 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">04</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Crear backup de rollback (.rar)</div>
+            <div class="step-time">~min 5:01–9:38</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            <strong>Antes de tocar cualquier carpeta</strong>, y con el sitio aún activo:<br><br>
+            1. Crear un archivo <code>.rar</code> (o <code>.zip</code>) comprimiendo las carpetas <code>Areas</code>, <code>Bin</code> y <code>Content</code> en su estado actual.<br>
+            2. Nombrar el archivo de manera que identifique la versión previa (ej: <code>rollback_7052.rar</code>).<br>
+            3. Guardar en una ubicación segura del servidor.<br><br>
+            <strong>Este paso garantiza la posibilidad de revertir</strong> si algo falla durante la actualización.
+          </div>
+          <div class="callout callout-danger">
+            <div class="callout-icon">🔴</div>
+            <div><strong>NUNCA saltar este paso.</strong> Si algo falla después del reemplazo y no hay rollback, restaurar la versión anterior se vuelve un proceso largo y riesgoso.</div>
+          </div>
+          <div class="callout callout-warn" style="margin-top:10px;">
+            <div class="callout-icon">⚠️</div>
+            <div>Si la versión a desplegar incluye cambios en la base de datos (hay archivo <code>.SQL</code> en el paquete), también se recomienda realizar un <strong>backup de la base de datos</strong> antes de continuar con la actualización.</div>
+          </div>
+          <div class="img-slot" id="slot-rollback">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-rollback')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Explorador de archivos mostrando el proceso de compresión de las carpetas Areas, Bin y Content en un archivo .rar nombrado con la versión anterior (ej: rollback_7052.rar), guardado junto a las carpetas del htdocs</div>
+            </div>
+            <img id="img-rollback" src="" alt="">
+            <div class="img-caption">Creación del archivo de rollback antes de actualizar</div>
+            <button class="remove-img" onclick="removeImage('slot-rollback', 'img-rollback')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 5 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">05</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Detener el pool de aplicaciones y bajar el sitio</div>
+            <div class="step-time">~min 9:27–9:38</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            En IIS, con el rollback ya creado:<br><br>
+            0. Antes de detener el sitio, revisar los <strong>Procesos de Trabajo (Worker Process)</strong> del pool de aplicaciones para confirmar que el sitio no está recibiendo solicitudes activas en ese momento.<br><br>
+            1. <strong>Detener (Reciclar) el Pool de Aplicaciones.</strong><br>
+            2. <strong>Detener el Sitio</strong>.<br><br>
+            <strong>¿Por qué es obligatorio bajar el sitio?</strong><br>
+            Si el sitio está corriendo, hay procesos activos que acceden a los archivos en <code>htdocs</code> (DLLs, etc.). Si se intenta copiar y pegar mientras el sitio está activo, puede fallar o corromperse.
+          </div>
+          <div class="callout callout-info">
+            <div class="callout-icon">📢</div>
+            <div>En un paso a producción real: coordinar con el cliente el horario de mantenimiento. El cliente debe colocar un <strong>banner</strong> en el ABox informando la ventana de mantenimiento antes de bajar el sitio.</div>
+          </div>
+          <div class="img-slot" id="slot-iis-down">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-iis-down')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Consola IIS mostrando el pool de aplicaciones con la opción "Reciclar" o "Detener" seleccionada, y el sitio ABox en estado "Detenido" (punto rojo o estado stopped visible en la lista de sitios)</div>
+            </div>
+            <img id="img-iis-down" src="" alt="">
+            <div class="img-caption">IIS — sitio y pool de aplicaciones detenidos antes de actualizar</div>
+            <button class="remove-img" onclick="removeImage('slot-iis-down', 'img-iis-down')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 6 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">06</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Copiar y reemplazar carpetas en el htdocs</div>
+            <div class="step-time">~min 10:31–12:07</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            Con el sitio abajo, proceder con la actualización:<br><br>
+            <strong>Orden de reemplazo:</strong><br>
+            1. <code>Areas</code> → copiar y pegar en <code>htdocs</code><br>
+            2. <code>Content</code> → copiar y pegar en <code>htdocs</code><br>
+            3. <code>Bin</code> → este se hace <strong>archivo por archivo</strong> entrando a la carpeta, para mayor control y seguridad<br><br>
+            Cuando Windows pregunte si reemplazar archivos existentes → confirmar <strong>"Realizar esta acción para todos"</strong> → Copiar y reemplazar.
+          </div>
+          <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div>Para <code>Bin</code>, hacerlo archivo a archivo permite ver exactamente qué DLLs se están actualizando y detectar si algo no corresponde antes de confirmar.</div>
+          </div>
+          <div class="img-slot" id="slot-copia">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-copia')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Explorador de archivos mostrando el proceso de copia de la carpeta Bin al htdocs del servidor, con el diálogo de confirmación de Windows "¿Copiar y reemplazar?" visible y la opción "Realizar esta acción para todos" activada</div>
+            </div>
+            <img id="img-copia" src="" alt="">
+            <div class="img-caption">Reemplazo de carpetas Areas, Content y Bin en el servidor</div>
+            <button class="remove-img" onclick="removeImage('slot-copia', 'img-copia')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 7 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">07</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Verificar número de versión del archivo actualizado</div>
+            <div class="step-time">~min 12:13–13:52</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            Después de copiar los archivos, <strong>verificar que la versión correcta quedó instalada</strong>:<br><br>
+            <strong>Método 1 (rápido):</strong> Seleccionar el archivo principal en <code>Bin</code> → pasar el cursor encima → el tooltip muestra la versión.<br><br>
+            <strong>Método 2 (detallado):</strong> Clic derecho → Propiedades → Detalles → campo <em>Versión del archivo</em>.<br><br>
+            El número debe coincidir con la versión publicada (ej: <code>7053</code>). Este paso es clave para confirmar que los cambios se realizaron correctamente y que no quedó ningún archivo de la versión anterior por error.<br><br>
+            <strong>Verificar también:</strong><br>
+            • <strong>Cambios en BD:</strong> revisar si el match de archivos indica cambios. Si no hay diferencias → no hubo cambio de BD en esta versión.<br>
+            • <strong>Plugins:</strong> verificar que los plugins también estén actualizados si correspondía.
+          </div>
+          <div class="img-slot" id="slot-version">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-version')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Ventana de propiedades del archivo principal (DLL) en Bin, mostrando la pestaña "Detalles" con el campo "Versión del archivo" indicando el número correcto (ej: 7053), como evidencia de que la actualización fue exitosa</div>
+            </div>
+            <img id="img-version" src="" alt="">
+            <div class="img-caption">Verificación de versión del archivo — propiedades → detalles</div>
+            <button class="remove-img" onclick="removeImage('slot-version', 'img-version')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 8 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">08</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Levantar el sitio y validar funcionamiento</div>
+            <div class="step-time">~min 14:23–15:34</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            1. En IIS: <strong>Levantar el Pool de Aplicaciones</strong>.<br>
+            2. <strong>Iniciar el Sitio</strong>.<br>
+            3. Esperar a que el sitio cargue (puede ser lento por el arranque de servicios — es normal).<br>
+            4. <strong>Hacer login en el ABox</strong>:<br>
+            &nbsp;&nbsp;&nbsp;• Si el primer intento de sesión <strong>falla</strong> → señal de que algo salió mal. Revisar antes de continuar.<br>
+            &nbsp;&nbsp;&nbsp;• Si el login carga <strong>correctamente</strong> → la actualización fue exitosa ✅<br>
+            5. Confirmar en la pantalla que la <strong>versión visible</strong> coincide con la publicada (ej: <code>7053</code>).
+          </div>
+          <div class="callout callout-tip">
+            <div class="callout-icon">✅</div>
+            <div>Si el primer intento de login funciona y la versión mostrada es la correcta, el despliegue fue exitoso. Si falla, revisar los archivos reemplazados antes de escalar el problema.</div>
+          </div>
+          <div class="img-slot" id="slot-sitio-up">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-sitio-up')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Pantalla del ABox ya cargado en el navegador después de la actualización, mostrando el número de versión 7053 visible en la interfaz (esquina o pie de página) y el acceso con login exitoso</div>
+            </div>
+            <img id="img-sitio-up" src="" alt="">
+            <div class="img-caption">ABox levantado — versión 7053 confirmada, login exitoso ✅</div>
+            <button class="remove-img" onclick="removeImage('slot-sitio-up', 'img-sitio-up')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 9 -->
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle step-circle-green">09</div></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-title">Notificar al grupo de soporte SSPD</div>
+            <div class="step-time">~min 20:19–20:45</div>
+          </div>
+          <div class="step-who">👤 Resp. de Servidor</div>
+          <div class="step-desc">
+            Una vez el sitio está arriba y validado:<br><br>
+            Enviar aviso al <strong>grupo de soporte SSPD</strong> confirmando que:<br><br>
+            • La versión (ej: <code>7053</code>) quedó actualizada en el servidor.<br>
+            • El sistema está operativo.
+          </div>
+          <div class="callout callout-tip">
+            <div class="callout-icon">🎉</div>
+            <div>Con este paso, <strong>la Parte 2 del despliegue queda completa</strong>. El ABox está actualizado y el equipo de soporte notificado.</div>
+          </div>
+          <div class="img-slot" id="slot-notif-soporte">
+            <input type="file" accept="image/*" onchange="loadImage(this, 'slot-notif-soporte')">
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">🖼️</div>
+              <div class="img-placeholder-label">Haz clic para subir una imagen</div>
+              <div class="img-placeholder-desc">CAPTURA SUGERIDA: Chat del grupo de soporte SSPD con el mensaje de confirmación enviado, indicando que la versión 7053 fue actualizada exitosamente en el servidor y que el sistema está operativo</div>
+            </div>
+            <img id="img-notif-soporte" src="" alt="">
+            <div class="img-caption">Notificación al grupo de soporte SSPD — actualización confirmada ✅</div>
+            <button class="remove-img" onclick="removeImage('slot-notif-soporte', 'img-notif-soporte')">✕ Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /steps-list -->
+  </div><!-- /tab-parte2 -->
+
+  <!-- ══════════════════════════════ TAB: PENDIENTES ══════════════════════════════ -->
+  <div id="tab-pendientes" class="tab-content">
+
+    <div class="section-header" style="margin-top: 8px;">
+      <div class="section-icon icon-blue">📌</div>
+      <div>
+        <h2>Pendientes y Acciones Identificadas</h2>
+        <p>Tareas por ejecutar para que el nuevo integrante pueda operar de forma autónoma</p>
+      </div>
+    </div>
+
+    <table class="pending-table">
+      <thead>
+        <tr>
+          <th>Responsable</th>
+          <th>Acción pendiente</th>
+          <th>Contexto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-orange">Líder Técnico</span></td>
+          <td>Entregar credenciales de SVN, URLs de ramas ABox 3.0 / 3.1 y accesos al nuevo integrante</td>
+          <td>Credenciales pueden ir encriptadas / encapsuladas antes de compartir</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-orange">Líder Técnico</span></td>
+          <td>Contactar al nuevo integrante para explicar los siguientes pasos del onboarding</td>
+          <td>Continuación de la sesión de inducción</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Sistemas</span></td>
+          <td>Instalar SVN en el equipo del nuevo integrante</td>
+          <td>Necesario para que pueda visualizar el repositorio</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Resp. de Artefactos</span></td>
+          <td>Crear usuario del nuevo integrante en Planificación Laboratorio e Intranet</td>
+          <td>El nuevo integrante no tiene acceso a Planificación Laboratorio</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">Nuevo Integrante</span></td>
+          <td>Elaborar el manual completo del proceso (sesión Parte 1 + sesión Parte 2)</td>
+          <td>Usando las grabaciones de ambas sesiones como referencia</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">Nuevo Integrante</span></td>
+          <td>Ejecutar el próximo despliegue con acompañamiento del Resp. de Artefactos</td>
+          <td>Primera práctica guiada — el instructor corrige y orienta</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">Nuevo Integrante</span></td>
+          <td>Ejecutar el próximo despliegue con acompañamiento del Resp. de Servidor</td>
+          <td>Primera práctica guiada en actualización de servidor — el instructor orienta</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Resp. Artefactos + Resp. Servidor</span></td>
+          <td>Asistir y supervisar el primer despliegue autónomo del nuevo integrante</td>
+          <td>Después de la práctica guiada, el nuevo integrante lo ejecuta con supervisión</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 40px;">
+      <div class="section-header">
+        <div class="section-icon icon-green">📝</div>
+        <div><h2>Notas de referencia rápida</h2></div>
+      </div>
+      <div class="callout callout-info" style="margin-bottom: 12px;">
+        <div class="callout-icon">🔵</div>
+        <div><strong>Ramas ABox activas:</strong> 3.0 (agua de RD) y 3.1 (agua de vulnerable). La 2.7 es obsoleta.</div>
+      </div>
+      <div class="callout callout-info" style="margin-bottom: 12px;">
+        <div class="callout-icon">🗄️</div>
+        <div><strong>Cambio de BD:</strong> Solo cuando Jenkins genera un archivo <code>.SQL</code>. En ese caso se registra el rango de versiones en el nombre del documento en Intranet.</div>
+      </div>
+      <div class="callout callout-warn" style="margin-bottom: 12px;">
+        <div class="callout-icon">⚠️</div>
+        <div><strong>Rollback siempre:</strong> Antes de cualquier actualización en servidor, crear el <code>.rar</code> de respaldo de las carpetas actuales.</div>
+      </div>
+      <div class="callout callout-danger">
+        <div class="callout-icon">🔴</div>
+        <div><strong>Sitio siempre abajo:</strong> Nunca hacer el reemplazo de carpetas con el sitio activo en IIS. Riesgo de corrupción de DLLs en ejecución.</div>
+      </div>
+    </div>
+
+  </div><!-- /tab-pendientes -->
+
+</div><!-- /container -->
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <button class="edit-mode-btn" id="editModeBtn" onclick="toggleEditMode()">✏️ Editar</button>
+  <button class="save-btn" onclick="saveHTML()">💾 Guardar Manual</button>
+</div>
+<div class="edit-hint" id="editHint">✏️ Modo edición activo — haz clic en cualquier texto para editarlo</div>
+
+<div class="footer">
+  Manual de Despliegue ABox · Generado internamente · Usar con grabaciones de sesiones Parte 1 + Parte 2
+</div>
+
+<script>
+  // ── TAB NAVIGATION ──
+  function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // ── EDIT MODE ──
+  const EDITABLE_SELECTORS = [
+    'h1', '.hero-sub', '.hero-meta-item',
+    '.step-title', '.step-who', '.step-time', '.step-desc',
+    '.callout > div:last-child',
+    '.section-header h2', '.section-header p',
+    '.part-title', '.part-num',
+    '.sum-text',
+    '.tool-name', '.tool-desc',
+    '.pending-table td', '.pending-table th',
+    '.participant',
+    '.footer',
+    '.img-caption', '.img-placeholder-label', '.img-placeholder-desc'
+  ];
+
+  let editMode = false;
+
+  function toggleEditMode() {
+    editMode = !editMode;
+    const btn = document.getElementById('editModeBtn');
+    const hint = document.getElementById('editHint');
+
+    if (editMode) {
+      btn.textContent = '🔒 Salir de edición';
+      btn.classList.add('on');
+      hint.classList.add('show');
+      setTimeout(() => hint.classList.remove('show'), 3000);
+      EDITABLE_SELECTORS.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+          // skip elements with file inputs or images inside
+          if (el.querySelector('input, img, button, table')) return;
+          el.contentEditable = 'true';
+          el.setAttribute('spellcheck', 'false');
+        });
+      });
+    } else {
+      btn.textContent = '✏️ Editar';
+      btn.classList.remove('on');
+      hint.classList.remove('show');
+      document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+        el.contentEditable = 'false';
+      });
+    }
+  }
+
+  // ── IMAGE LOADING ──
+  function loadImage(input, slotId) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const slot = document.getElementById(slotId);
+      const imgId = 'img-' + slotId.replace('slot-', '');
+      const img = document.getElementById(imgId);
+      if (img) {
+        img.src = e.target.result;
+        img.style.display = 'block';
+        slot.classList.add('has-image');
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage(slotId, imgId) {
+    const slot = document.getElementById(slotId);
+    const img = document.getElementById(imgId);
+    if (img) { img.src = ''; img.style.display = 'none'; }
+    slot.classList.remove('has-image');
+    const input = slot.querySelector('input[type="file"]');
+    if (input) input.value = '';
+  }
+
+  // ── SAVE HTML ──
+  function saveHTML() {
+    // disable edit mode before saving
+    if (editMode) toggleEditMode();
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'manual_despliegue_abox.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ── DRAG & DROP ──
+  document.querySelectorAll('.img-slot').forEach(slot => {
+    slot.addEventListener('dragover', e => { e.preventDefault(); slot.style.borderColor = 'var(--accent)'; });
+    slot.addEventListener('dragleave', () => { slot.style.borderColor = ''; });
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      slot.style.borderColor = '';
+      const file = e.dataTransfer.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const slotId = slot.id;
+      const imgId = 'img-' + slotId.replace('slot-', '');
+      const img = document.getElementById(imgId);
+      if (!img) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        img.src = ev.target.result;
+        img.style.display = 'block';
+        slot.classList.add('has-image');
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+</script>
+</body>
+</html>
